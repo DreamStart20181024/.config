@@ -5,29 +5,39 @@
 "|_|  |_| |_|   |_| \_|  \_/  |___|_|  |_|_| \_\\____|
 
 " Author: @LiuPeng
-
-
-
-" 判断操作系统
 "
-let g:iswindows = 0
-let g:islinux = 0
+"
 
-if has('win64')
-	let g:iswindows = 1
-elseif has('unix')
-	let g:islinux = 1
-elseif has('mac')
-	let g:ismac = 1
+
+" 判断操作系统类型
+if(has('win32') || has('win64'))
+    let g:isWIN = 1
+    let g:isMAC = 0
+	let g:isLinux = 0
+elseif(system('uname') == 'Linux')
+        let g:isLinux = 1
+		let g:isWIN = 0
+		let g:isMAC = 0
+else
+        let g:isWIN = 0
+        let g:isMAC = 1
+        let g:isLinux = 0
+endif
+
+" 判断是否处于 GUI 界面
+if has('gui_running')
+    let g:isGUI = 1
+else
+    let g:isGUI = 0
 endif
 
 " 自动加载vim-plug插件，如果没有安装的情况下
-if has(g:islinux == 1)
+if has(g:isLinux == 1)
 	if empty(glob('~/.config/nvim/autoload/plug.vim'))
 		silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 	endif
-elseif has(g:iswindows == 1)
+elseif has(g:isWIN == 1)
 	if empty(glob('C:\\Users\\admin\\AppData\\Local\\nvim\\autoload'))
 		silent !curl -fLo 'C:\\Users\\admin\\AppData\\Local\\nvim\\autoload\\plug.vim' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 		autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
@@ -35,13 +45,13 @@ elseif has(g:iswindows == 1)
 endif
 
 
-" #######################################   基本设置    ######################################
+" #######################################   基本设置   ######################################
 
 set nocompatible                                                    " 不启用vi的键盘模式,关闭兼容模式(必须设置在开头)
 set history=2000                                                    " 设置历史操作记录为2000条
 syntax enable                                                       " 语法高亮支持
 filetype on                                                         " 关闭文件类型自动检测功能,这个功能被filetype plugin indent on代替
-filetype plugin indent on                                           " 载入文件类型插件,代替filetype off
+filetype plugin indent on                                           " 载入文件类型插件,代替filetype off 
 
 " 设置文件编码和文件格式
 set fileencodings=utf-8,gb2312,gbk,gb18030,big5,ucs-bom,cp936,latin-1
@@ -51,63 +61,37 @@ set termencoding=utf-8
 set fileformat=unix
 set fileformats=unix,mac,dos
 
-" 设置字体
-"set guifont=JetBrains\ Mono:h11:cANSI
-" 设置退格键可用
-set backspace=2
-" 自动对齐
-set autoindent
-" 设置自动缩进
-set ai!
-" 智能自动缩进
-set smartindent
-" 开启相对行号
-set relativenumber
-" 显示行号
-set number
-" 右下角显示光标位置的状态行
-set ruler
-" 开启实时搜索功能
-set incsearch
-" 开启高亮显示结果
-set hlsearch
-" 搜索到文件两端时不重新搜索
-set nowrapscan
-" 允许在有未保存的修改时切换缓冲区
-set hidden
-" 设定文件浏览器目录为当前目录
-set autochdir
-" 选择代码折叠类型
-set foldmethod=indent
-" 禁止自动折叠
-set foldlevel=100
-" 开启状态栏信息
-set laststatus=2
-" 命令行的高度，默认为1，这里设为2
-set cmdheight=2
-" 当文件在外部被修改时自动更新该文件
-set autoread
-" 允许可视列块模式的虚拟编辑
-set virtualedit=block
-" 关闭八进制
-set nrformats=
-" 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
-set list
+"set guifont=JetBrains\ Mono:h11:cANSI                               " 设置字体
+set backspace=2                                                     " 设置退格键可用
+set autoindent                                                      " 自动对齐
+set ai!                                                             " 设置自动缩进
+set smartindent                                                     " 智能自动缩进
+set relativenumber                                                  " 开启相对行号
+set number                                                          " 显示行号
+set ruler                                                           " 右下角显示光标位置的状态行
+set incsearch                                                       " 开启实时搜索功能
+set hlsearch                                                        " 开启高亮显示结果
+set nowrapscan                                                      " 搜索到文件两端时不重新搜索
+set hidden                                                          " 允许在有未保存的修改时切换缓冲区
+set autochdir                                                       " 设定文件浏览器目录为当前目录
+set foldmethod=indent                                               " 选择代码折叠类型
+set foldlevel=100                                                   " 禁止自动折叠
+set laststatus=2                                                    " 开启状态栏信息
+set cmdheight=2                                                     " 命令行的高度，默认为1，这里设为2
+set autoread                                                        " 当文件在外部被修改时自动更新该文件
+set virtualedit=block                                               " 允许可视列块模式的虚拟编辑
+set nrformats=                                                      " 关闭八进制
+set list                                                            " 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
 set listchars=tab:\|\ ,trail:▫
-" 将Tab自动转化成空格[需要输入真正的Tab符时，使用 Ctrl+V + Tab]
-set expandtab
-" 显示括号配对情况
-set showmatch
+set expandtab                                                       " 将Tab自动转化成空格[需要输入真正的Tab符时，使用 Ctrl+V + Tab]
+set showmatch                                                       " 显示括号配对情况
 
 " ------ Vim美化 ------
 " 支持真色彩；终端下
 set termguicolors
-" 设置vim背景为浅色
-set background=dark
-"
-packadd! dracula
-" 设置gruvbox主题
-colorscheme dracula
+set background=dark                                             " 设置vim背景为浅色
+packadd! dracula                                                " 
+colorscheme dracula                                             " 设置gruvbox主题
 " --------------------------------
 " 根据时间动态的切换主题背景颜色
 " 白天激活浅色版本（此处定义为7 AM-7PM），晚上激活暗色版本。
@@ -195,6 +179,37 @@ set noswapfile                                                      " 不生成�
 let g:python3_host_prog='C:/Python38/python.exe'
 let g:python_host_prog='C:/Python26/python.exe'
 
+
+" 根据后缀名指定文件类型
+au BufRead,BufNewFile *.h        set ft=c
+au BufRead,BufNewFile *.i        set ft=c
+au BufRead,BufNewFile *.m        set ft=objc
+au BufRead,BufNewFile *.di       set ft=d
+au BufRead,BufNewFile *.ss       set ft=scheme
+au BufRead,BufNewFile *.cl       set ft=lisp
+au BufRead,BufNewFile *.phpt     set ft=php
+au BufRead,BufNewFile *.inc      set ft=php
+au BufRead,BufNewFile *.cson     set ft=coffee
+au BufRead,BufNewFile *.sql      set ft=mysql
+au BufRead,BufNewFile *.tpl      set ft=smarty
+au BufRead,BufNewFile *.txt      set ft=txt
+au BufRead,BufNewFile *.log      set ft=conf
+au BufRead,BufNewFile hosts      set ft=conf
+au BufRead,BufNewFile *.conf     set ft=dosini
+au BufRead,BufNewFile http*.conf set ft=apache
+au BufRead,BufNewFile *.ini      set ft=dosini
+
+au BufRead,BufNewFile */nginx/*.conf        set ft=nginx
+au BufRead,BufNewFile */nginx/**/*.conf     set ft=nginx
+au BufRead,BufNewFile */openresty/*.conf    set ft=nginx
+au BufRead,BufNewFile */openresty/**/*.conf set ft=nginx
+
+au BufRead,BufNewFile *.yml.bak      set ft=yaml
+au BufRead,BufNewFile *.yml.default  set ft=yaml
+au BufRead,BufNewFile *.yml.example  set ft=yaml
+
+au BufRead,BufNewFile CMakeLists.txt set ft=cmake
+
 "##################################  按键设置   ##################################
 " 重新映射 <LEADER> 按键
 let mapleader = ","
@@ -251,9 +266,6 @@ nnoremap <LEADER>( viw<esc>a)<esc>hbi(<esc>lel
 nnoremap <LEADER>[ viw<esc>a]<esc>hbi[<esc>lel
 nnoremap <LEADER>{ viw<esc>a}<esc>hbi{<esc>lel
 
-" 添加注释
-autocmd FileType javascript nnoremap <buffer> <LEADER>c I// <ESC>
-autocmd FileType shell,python nnoremap <buffer> <LEADER>c I# <ESC>
 " Disable the default s key
 " 关闭s键的默认功能
 "noremap s <nop>
@@ -286,7 +298,7 @@ nnoremap <LEADER>tt :%s/    /\t/g<CR>
 vnoremap <LEADER>tt :s/    /\t/g<CR>
 
 " 替换Windows下的 ^M符号
-map <LEADER>dm :%s/ //g<CR>
+map <LEADER>dm :%s///g<CR>
 
 " 折叠
 noremap <silent> <LEADER>o za
@@ -325,51 +337,333 @@ map tu :tabe<CR>
 map tn :-tabnext<CR>
 map tl :+tabnext<CR>
 
-" ##########################   自动编译文件    ######################################
-" F5 自动编译文件 Normal+Visual mode
-map <F5> :call CompileRunGcc()<CR>
+" Ctrl + ]            多选择跳转
+nmap <c-]> g<c-]>
+vmap <c-]> g<c-]>
 
-function! CompileRunGcc()
-	exec "w"
-	if &filetype == 'c'
-		exec "!g++ % -o %<"
-		exec "!time ./%<"
-	elseif &filetype == 'cpp'
-		set splitbelow
-		exec "!g++ -std=c++11 % -Wall -o %<"
-		:sp
-		:res -15
-		:term ./%<
-	elseif &filetype == 'java'
-		exec "!javac %"
-		exec "!time java %<"
-	elseif &filetype == 'sh'
-		:!time bash %
-	elseif &filetype == 'python'
-		set splitbelow
-		:sp
-		:term python3 %
-	elseif &filetype == 'html'
-		silent! exec "!" chrome " % &"
-	elseif &filetype == 'markdown'
-		exec "MarkdownPreview"
-	elseif &filetype == 'tex'
-		silent! exec "VimtexStop"
-		silent! exec "VimtexCompile"
-	elseif &filetype == 'dart'
-		CocCommand flutter.run -d iPhone\ 11\ Pro
-		CocCommand flutter.dev.openDevLog
-	elseif &filetype == 'javascript'
-		set splitbelow
-		:sp
-		:term export DEBUG="INFO,ERROR,WARNING"; node --trace-warnings .
-	elseif &filetype == 'go'
-		set splitbelow
-		:sp
-		:term go run .
-	endif
+" Ctrl + T            跳回原位置
+nmap <c-t> :pop<cr>
+
+" Ctrl + U            简化全能补全按键
+imap <c-u> <c-x><c-o>
+
+"" Ctrl + H            光标移当前行行首[插入模式]、切换左窗口[Normal 模式]
+"imap <c-h> <esc>I
+"map <c-h> <c-w><c-h>
+"
+"" Ctrl + J            光标移下一行行首[插入模式]、切换下窗口[Normal 模式]
+"imap <c-j> <esc><down>I
+"map <c-j> <c-w><c-j>
+"
+"" Ctrl + K            光标移上一行行尾[插入模式]、切换上窗口[Normal 模式]
+"imap <c-k> <esc><up>A
+"map <c-k> <c-w><c-k>
+"
+"" Ctrl + L            光标移当前行行尾[插入模式]、切换右窗口[Normal 模式]
+"imap <c-l> <esc>A
+"map <c-l> <c-w><c-l>
+
+"" \c                  复制至公共剪贴板
+"vmap <leader>c "+y
+"
+"" \a                  复制所有至公共剪贴板
+"nmap <leader>a <esc>ggVG"+y<esc>
+
+"" \v                  从公共剪贴板粘贴
+"imap <leader>v <esc>"+p
+"nmap <leader>v "+p
+"vmap <leader>v "+p
+
+"" \nt                 打开文件树窗口，在左侧栏显示 [NERDTree 插件]
+"nmap <leader>nt :NERDTree<cr>
+"
+"" \ut                 打开/关闭文档编辑历史窗口，在左侧栏显示 [Undotree 插件]
+"nmap <leader>ut :UndotreeToggle<cr>
+"
+"" \il                 显示/关闭对齐线 [indentLine 插件]
+"nmap <leader>il :IndentLinesToggle<cr>
+"
+"" \tl                 打开/关闭 Tags 窗口，在右侧栏显示 [Tagbar 插件]
+"nmap <leader>tl :TagbarToggle<cr><c-w><c-l>
+"
+"" \fe                 打开文件编码窗口，在右侧栏显示 [FencView 插件]
+"nmap <leader>fe :FencView<cr>
+"
+"" \mp                 生成 Promptline 脚本文件，用于个性化终端操作 [Promptline 插件]
+"nmap <leader>mp :!rm ~/backup/.promptline<cr><esc>:PromptlineSnapshot ~/backup/.promptline airline<cr>
+"
+"" \gi                 开启或关闭 GitGutter [GitGutter 插件]
+"nmap <leader>gi :GitGutterToggle<cr>:GitGutterSignsToggle<cr>:GitGutterLineHighlightsToggle<cr>
+"
+"" \gd                 打开 Git 文件对比模式 [GitGutter 插件]
+"nmap <leader>gd :Gdiff<cr>
+"
+"" \gl                 调用 Tig 查看提交日志 [tig-explorer 插件]
+"nmap <leader>gl :TigOpenCurrentFile<cr>
+"
+"" \ss                 搜索当前光标下的单词 [ack 插件]
+"nmap <leader>ss :Ack! '\b<c-r><c-w>\b'<cr>
+"
+"" \ff                 搜索当前文件中的类、方法、函数名 [ctrlp-funky 插件]
+"nmap <leader>ff :CtrlPFunky<cr>
+"
+"" \fc                 格式化当前文件的代码 [prettier 插件]
+"nmap <leader>fc :PrettierAsync<cr>
+
+" \rb                 一键去除全部尾部空白
+imap <leader>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+nmap <leader>rb :let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+vmap <leader>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+
+" \rm                 一键去除全部 ^M 字符
+imap <leader>rm <esc>:%s/<c-v><c-m>//g<cr>
+nmap <leader>rm :%s/<c-v><c-m>//g<cr>
+vmap <leader>rm <esc>:%s/<c-v><c-m>//g<cr>
+
+" \rt                 一键替换全部 Tab 为空格
+nmap <leader>rt <esc>:retab<cr>
+
+" \ra                 一键清理当前代码文件
+nmap <leader>ra <esc>\rt<esc>\rb<esc>gg=G<esc>gg<esc>
+
+" \th                 一键生成与当前编辑文件同名的 HTML 文件 [不输出行号]
+imap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+nmap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+vmap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+
+"" \wa                 一键编译所有 Vimwiki 源文件
+"imap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
+"nmap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
+"vmap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
+
+"" \ml                 保留本分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <leader>ml :diffget LOCAL<cr>
+"
+"" \mr                 保留它分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <leader>mr :diffget REMOTE<cr>
+"
+"" \mb                 保留基分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <leader>mb :diffget BASE<cr>
+"
+"" \mu                 刷新比较结果     [git mergetool -t vimdiff 时可用]
+"nmap <leader>mu :diffupdate<cr>
+
+" \got                一键切换到 gohtmltmpl 语法高亮
+imap <leader>got <esc>:se ft=gohtmltmpl<cr>li
+nmap <leader>got <esc>:se ft=gohtmltmpl<cr>
+
+" \php                一键切换到 PHP 语法高亮
+imap <leader>php <esc>:se ft=php<cr>li
+nmap <leader>php <esc>:se ft=php<cr>
+
+" \ruby               一键切换到 Ruby 语法高亮
+imap <leader>ruby <esc>:se ft=ruby<cr>li
+nmap <leader>ruby <esc>:se ft=ruby<cr>
+
+" \eruby              一键切换到 eRuby 语法高亮
+imap <leader>eruby <esc>:se ft=eruby<cr>li
+nmap <leader>eruby <esc>:se ft=eruby<cr>
+
+" \cf                 一键切换到 Coffee 语法高亮
+imap <leader>cf <esc>:se ft=coffee<cr>li
+nmap <leader>cf <esc>:se ft=coffee<cr>
+
+" \ts                 一键切换到 TypeScript 语法高亮
+imap <leader>ts <esc>:se ft=typescript<cr>li
+nmap <leader>ts <esc>:se ft=typescript<cr>
+
+" \js                 一键切换到 JavaScript 语法高亮
+imap <leader>js <esc>:se ft=javascript<cr>li
+nmap <leader>js <esc>:se ft=javascript<cr>
+
+" \jsx                一键切换到 JSX 语法高亮
+imap <leader>jsx <esc>:se ft=javascript.jsx<cr>li
+nmap <leader>jsx <esc>:se ft=javascript.jsx<cr>
+
+" \css                一键切换到 CSS 语法高亮
+imap <leader>css <esc>:se ft=css<cr>li
+nmap <leader>css <esc>:se ft=css<cr>
+
+" \html               一键切换到 HTML 语法高亮
+imap <leader>html <esc>:se ft=html<cr>li
+nmap <leader>html <esc>:se ft=html<cr>
+
+" ##########################   自动编译文件    ######################################
+" ======= 编译 && 运行 ======= "
+" 编译并运行
+func! Compile_Run_Code()
+    exec 'w'
+    if &filetype == 'c'
+        if g:isWIN
+            exec '!gcc -Wall -std=c11 -o %:r %:t && %:r.exe'
+        else
+            exec '!clang -Wall -std=c11 -o %:r %:t && ./%:r'
+        endif
+    elseif &filetype == 'cpp'
+        if g:isWIN
+            exec '!g++ -Wall -std=c++17 -o %:r %:t && %:r.exe'
+        else
+            exec '!clang++ -Wall -std=c++17 -o %:r %:t && ./%:r'
+        endif
+    elseif &filetype == 'objc'
+        if g:isMAC
+            exec '!clang -fobjc-arc -framework Foundation %:t -o %:r && ./%:r'
+        endif
+    elseif &filetype == 'swift'
+        if g:isWIN
+            exec '!swiftc %:t && %:r.exe'
+        else
+            exec '!swiftc %:t && ./%:r'
+        endif
+    elseif &filetype == 'd'
+        if g:isWIN
+            exec '!dmd -wi %:t && del %:r.obj && %:r.exe'
+        else
+            exec '!dmd -wi %:t && rm %:r.o && ./%:r'
+        endif
+    elseif &filetype == 'rust'
+        if g:isWIN
+            exec '!rustc %:t && %:r.exe'
+        else
+            exec '!rustc %:t && ./%:r'
+        endif
+    elseif &filetype == 'go'
+        if g:isWIN
+            exec '!go build %:t && %:r.exe'
+        else
+            exec '!go build %:t && ./%:r'
+        endif
+    elseif &filetype == 'nim'
+        if g:isWIN
+            exec '!nim c %:t && %:r.exe'
+        else
+            exec '!nim c %:t && ./%:r'
+        endif
+    elseif &filetype == 'crystal'
+        if g:isWIN
+            exec '!crystal build %:t && %:r.exe'
+        else
+            exec '!crystal build %:t && ./%:r'
+        endif
+    elseif &filetype == 'vala'
+        if g:isWIN
+            exec '!valac %:t && %:r.exe'
+        else
+            exec '!valac %:t && ./%:r'
+        endif
+    elseif &filetype == 'java'
+        exec '!javac %:t && java %:r'
+    elseif &filetype == 'groovy'
+        exec '!groovy %:t'
+    elseif &filetype == 'kotlin'
+        exec '!kotlinc %:t -include-runtime -d %:r.jar && kotlin %:r.jar'
+    elseif &filetype == 'scala'
+        exec '!scala %:t'
+    elseif &filetype == 'clojure'
+        exec '!lein exec %:t'
+    elseif &filetype == 'cs'
+        if g:isWIN
+            exec '!csc %:t && %:r.exe'
+        else
+            exec '!mcs %:t && mono %:r.exe'
+        endif
+    elseif &filetype == 'fsharp'
+        if g:isWIN
+            exec '!fsc %:t && %:r.exe'
+        else
+            exec '!fsharpc %:t && mono %:r.exe'
+        endif
+    elseif &filetype == 'erlang'
+        exec '!escript %:t'
+    elseif &filetype == 'elixir'
+        exec '!elixir %:t'
+    elseif &filetype == 'lfe'
+        exec '!lfe %:t'
+    elseif &filetype == 'scheme'
+        exec '!chez %:t'
+    elseif &filetype == 'racket'
+        exec '!racket -fi %:t'
+    elseif &filetype == 'lisp'
+        exec '!sbcl --load %:t'
+    elseif &filetype == 'ocaml'
+        if g:isWIN
+            exec '!ocamlc -o %:r.exe %:t && %:r.exe'
+        else
+            exec '!ocamlc -o %:r %:t && ./%:r'
+        endif
+    elseif &filetype == 'haskell'
+        if g:isWIN
+            exec '!ghc -o %:r %:t && %:r.exe'
+        else
+            exec '!ghc -o %:r %:t && ./%:r'
+        endif
+    elseif &filetype == 'io'
+        exec '!io %:t'
+    elseif &filetype == 'lua'
+        exec '!lua %:t'
+    elseif &filetype == 'perl'
+        exec '!perl %:t'
+    elseif &filetype == 'perl6'
+        exec '!perl6 %:t'
+    elseif &filetype == 'raku'
+        exec '!raku %:t'
+    elseif &filetype == 'php'
+        exec '!php %:t'
+    elseif &filetype == 'python'
+        exec '!python3 %:t'
+    elseif &filetype == 'ruby'
+        exec '!ruby %:t'
+    elseif &filetype == 'julia'
+        exec '!julia %:t'
+    elseif &filetype == 'dart'
+        exec '!dart %:t'
+    elseif &filetype == 'elm'
+        exec '!elm make %:t'
+    elseif &filetype == 'haxe'
+        exec '!haxe -main %:r --interp'
+    elseif &filetype == 'javascript'
+        exec '!node %:t'
+    elseif &filetype == 'coffee'
+        exec '!coffee -c %:t && node %:r.js'
+    elseif &filetype == 'typescript'
+        exec '!tsc %:t && node %:r.js'
+    elseif &filetype == 'ls'
+        exec '!lsc -c %:t && node %:r.js'
+    elseif &filetype == 'r'
+        exec '!Rscript %:t'
+    elseif &filetype == 'sh'
+        exec '!bash %:t'
+    elseif &filetype == 'slim'
+        exec '!slimrb -ce %:t > %:r.html.erb'
+    elseif &filetype == 'scss'
+        exec '!scss %:t > %:r.css'
+    elseif &filetype == 'less'
+        exec '!lessc %:t > %:r.css'
+    elseif &filetype == 'solidity'
+        exec '!solc --bin %:t'
+    endif
 endfunc
 
+" \rr        一键保存、编译、运行
+imap <leader>rr <esc>:call Compile_Run_Code()<cr>
+nmap <leader>rr :call Compile_Run_Code()<cr>
+vmap <leader>rr <esc>:call Compile_Run_Code()<cr>
+
+" ########################   添加文件Title  #############################
+
+" Python自动插入文件标题
+autocmd BufNewFile *.py exec ":call SetPythonTitle()"
+function SetPythonTitle()
+  call setline(1,"# Copyright (c) StilesYu  All Rights Reserved.")
+  call append(line("."), "\# File Name: ".("%"))
+  call append(line(".")+1, "\# Author: Stiles Yu")
+  call append(line(".")+2, "\# mail: 13891328530@163.com")
+  call append(line(".")+3,"\# github:https://github.com/Stilesyu")
+  call append(line(".")+4,"\# blog:http://www.stilesyu.com/")
+ call append(line(".")+5, "\# Created Time: ".strftime("%Y-%m-%d",localtime()))
+	"新建文件后，自动定位到文件末尾
+	autocmd BufNewFile * normal G o
+endfunc
 
 " ########################    插件配置  #############################
 
@@ -379,7 +673,7 @@ map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
 " 当只剩 文件窗口管理器时 关闭 vim
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" 更改默认的 箭头
+" 更改默认的 箭头 
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 " 默认打开NERDTree
