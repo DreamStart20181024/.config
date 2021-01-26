@@ -5,8 +5,6 @@
 "|_|  |_| |_|       \_/  |___|_|  |_|_| \_\\____|
 
 " Author: @LiuPeng
-
-
 "
 "
 
@@ -178,6 +176,9 @@ set noswapfile                                                      " 不生成�
 "	set undofile
 "	set undodir=~/.config/nvim/tmp/undo,.							" 指定撤销文件的路径
 "endif
+" 配置Python虚拟环境
+let g:python3_host_prog='C:/Python38/python.exe'
+let g:python_host_prog='C:/Python26/python.exe'
 
 
 " 根据后缀名指定文件类型

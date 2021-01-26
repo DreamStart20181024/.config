@@ -68,7 +68,7 @@ set ai!                                                             " 设置自�
 set smartindent                                                     " 智能自动缩进
 set relativenumber                                                  " 开启相对行号
 set number                                                          " 显示行号
-set ruler                                                           " 右下角显示光标位置的状态行
+"set ruler                                                           " 右下角显示光标位置的状态行
 set incsearch                                                       " 开启实时搜索功能
 set hlsearch                                                        " 开启高亮显示结果
 set nowrapscan                                                      " 搜索到文件两端时不重新搜索
@@ -89,23 +89,24 @@ set showmatch                                                       " 显示括�
 " ------ Vim美化 ------
 " 支持真色彩；终端下
 set termguicolors
-set background=dark                                             " 设置vim背景为浅色
-packadd! dracula                                                " 
-colorscheme dracula                                             " 设置gruvbox主题
 " --------------------------------
 " 根据时间动态的切换主题背景颜色
 " 白天激活浅色版本（此处定义为7 AM-7PM），晚上激活暗色版本。
 " --------------------------------
 "if strftime('%H') >= 7 && strftime('%H') < 19
 "  set background=light                                         " 设置vim背景为浅色
-"  let g:airline_theme='cosmic_latte_light'                     " 航空公司的配置
-"  "let g:lightline = { 'colorscheme': 'cosmic_latte_light' }   " 灯线的配置 
+"  let g:airline_theme= 'gruvbox'                      " 航空公司的配置
 "else
 "  set background=dark                                          " 设置vim背景为深色
-"  let g:airline_theme='cosmic_latte_dark'                      " 航空公司的配置
-"  "let g:lightline = { 'colorscheme': 'cosmic_latte_dark' }    " 灯线的配置
+"  let g:airline_theme= 'gruvbox'                      " 航空公司的配置
 "endif
-"colorscheme cosmic_latte
+
+" gruvbox 启用透明背景
+let g:gruvbox_transparent_bg= 1
+let g:gruvbox_contrast_dark= 'hard'
+set background=dark                                          " 设置vim背景为深色
+packadd! gruvbox                                                " 
+colorscheme gruvbox                                             " 设置gruvbox主题
 
 " -------- 窗口及布局配置 ---------
 au GUIEnter * simalt ~x                                             " 启动时自动最大化窗口
@@ -297,8 +298,9 @@ noremap <LEADER>dw /\(\<\w\+\>\)\_s*\1
 nnoremap <LEADER>tt :%s/    /\t/g<CR>
 vnoremap <LEADER>tt :s/    /\t/g<CR>
 
-" 替换Windows下的 ^M符号
-map <LEADER>dm :%s///g<CR>
+" ,dm                 一键去除全部 ^M 字符
+imap <LEADER>dm <esc>:%s/<c-v><c-m>//g<cr>
+nmap <LEADER>dm :%s/<c-v><c-m>//g<cr>vmap <LEADER>dm <esc>:%s/<c-v><c-m>//g<cr>
 
 " 折叠
 noremap <silent> <LEADER>o za
@@ -308,7 +310,7 @@ noremap <silent> <LEADER>o za
 "noremap <c-g> :tabe<CR>:-tabmove<CR>:term lazygit<CR>
 
 " 格式化
-nnoremap \f :Autoformat<CR>
+"nnoremap <LEADER>f :Autoformat<CR>
 
 " ----------------------  分屏 ------------------
 "  向左分屏，光标移动到新的窗口上
@@ -343,37 +345,7 @@ vmap <c-]> g<c-]>
 
 " Ctrl + T            跳回原位置
 nmap <c-t> :pop<cr>
-
-" Ctrl + U            简化全能补全按键
-imap <c-u> <c-x><c-o>
-
-"" Ctrl + H            光标移当前行行首[插入模式]、切换左窗口[Normal 模式]
-"imap <c-h> <esc>I
-"map <c-h> <c-w><c-h>
-"
-"" Ctrl + J            光标移下一行行首[插入模式]、切换下窗口[Normal 模式]
-"imap <c-j> <esc><down>I
-"map <c-j> <c-w><c-j>
-"
-"" Ctrl + K            光标移上一行行尾[插入模式]、切换上窗口[Normal 模式]
-"imap <c-k> <esc><up>A
-"map <c-k> <c-w><c-k>
-"
-"" Ctrl + L            光标移当前行行尾[插入模式]、切换右窗口[Normal 模式]
-"imap <c-l> <esc>A
-"map <c-l> <c-w><c-l>
-
-"" \c                  复制至公共剪贴板
-"vmap <leader>c "+y
-"
-"" \a                  复制所有至公共剪贴板
-"nmap <leader>a <esc>ggVG"+y<esc>
-
-"" \v                  从公共剪贴板粘贴
-"imap <leader>v <esc>"+p
-"nmap <leader>v "+p
-"vmap <leader>v "+p
-
+" ---------------------- 插件快捷键 ----------------------  
 "" \nt                 打开文件树窗口，在左侧栏显示 [NERDTree 插件]
 "nmap <leader>nt :NERDTree<cr>
 "
@@ -408,87 +380,93 @@ imap <c-u> <c-x><c-o>
 "nmap <leader>ff :CtrlPFunky<cr>
 "
 "" \fc                 格式化当前文件的代码 [prettier 插件]
-"nmap <leader>fc :PrettierAsync<cr>
+"nmap <LEADER>fc :PrettierAsync<cr>
 
-" \rb                 一键去除全部尾部空白
-imap <leader>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
-nmap <leader>rb :let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
-vmap <leader>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+" ,rb                 一键去除全部尾部空白
+imap <LEADER>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+nmap <LEADER>rb :let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
+vmap <LEADER>rb <esc>:let _s=@/<bar>:%s/\s\+$//e<bar>:let @/=_s<bar>:nohl<cr>
 
-" \rm                 一键去除全部 ^M 字符
-imap <leader>rm <esc>:%s/<c-v><c-m>//g<cr>
-nmap <leader>rm :%s/<c-v><c-m>//g<cr>
-vmap <leader>rm <esc>:%s/<c-v><c-m>//g<cr>
+" ,rt                 一键替换全部 Tab 为空格
+nmap <LEADER>rt <esc>:retab<cr>
 
-" \rt                 一键替换全部 Tab 为空格
-nmap <leader>rt <esc>:retab<cr>
+" ,ra                 一键清理当前代码文件
+nmap <LEADER>ra <esc>\rt<esc>\rb<esc>gg=G<esc>gg<esc>
 
-" \ra                 一键清理当前代码文件
-nmap <leader>ra <esc>\rt<esc>\rb<esc>gg=G<esc>gg<esc>
+" ,th                 一键生成与当前编辑文件同名的 HTML 文件 [不输出行号]
+imap <LEADER>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+nmap <LEADER>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+vmap <LEADER>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
 
-" \th                 一键生成与当前编辑文件同名的 HTML 文件 [不输出行号]
-imap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
-nmap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
-vmap <leader>th <esc>:set nonumber<cr>:set norelativenumber<cr><esc>:TOhtml<cr><esc>:w %:r.html<cr><esc>:q<cr>:set number<cr>:set relativenumber<cr>
+" ,wa                 一键编译所有 Vimwiki 源文件
+"imap <LEADER>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
+"nmap <LEADER>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
+"vmap <LEADER>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
 
-"" \wa                 一键编译所有 Vimwiki 源文件
-"imap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
-"nmap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
-"vmap <leader>wa <esc>\ww<esc>:VimwikiAll2HTML<cr>:qa<cr>
-
-"" \ml                 保留本分支的改动 [git mergetool -t vimdiff 时可用]
-"nmap <leader>ml :diffget LOCAL<cr>
+"" ,ml                 保留本分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <LEADER>ml :diffget LOCAL<cr>
 "
-"" \mr                 保留它分支的改动 [git mergetool -t vimdiff 时可用]
-"nmap <leader>mr :diffget REMOTE<cr>
+"" ,mr                 保留它分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <LEADER>mr :diffget REMOTE<cr>
 "
-"" \mb                 保留基分支的改动 [git mergetool -t vimdiff 时可用]
-"nmap <leader>mb :diffget BASE<cr>
+"" ,mb                 保留基分支的改动 [git mergetool -t vimdiff 时可用]
+"nmap <LEADER>mb :diffget BASE<cr>
 "
-"" \mu                 刷新比较结果     [git mergetool -t vimdiff 时可用]
-"nmap <leader>mu :diffupdate<cr>
+"" ,mu                 刷新比较结果     [git mergetool -t vimdiff 时可用]
+"nmap <LEADER>mu :diffupdate<cr>
 
-" \got                一键切换到 gohtmltmpl 语法高亮
-imap <leader>got <esc>:se ft=gohtmltmpl<cr>li
-nmap <leader>got <esc>:se ft=gohtmltmpl<cr>
+" ---------------------- 语法切换 ----------------------  
+" ,got                一键切换到 gohtmltmpl 语法高亮
+imap <LEADER>got <esc>:se ft=gohtmltmpl<cr>li
+nmap <LEADER>got <esc>:se ft=gohtmltmpl<cr>
 
-" \php                一键切换到 PHP 语法高亮
-imap <leader>php <esc>:se ft=php<cr>li
-nmap <leader>php <esc>:se ft=php<cr>
+" ,php                一键切换到 PHP 语法高亮
+imap <LEADER>php <esc>:se ft=php<cr>li
+nmap <LEADER>php <esc>:se ft=php<cr>
 
-" \ruby               一键切换到 Ruby 语法高亮
-imap <leader>ruby <esc>:se ft=ruby<cr>li
-nmap <leader>ruby <esc>:se ft=ruby<cr>
+" ,ruby               一键切换到 Ruby 语法高亮
+imap <LEADER>ruby <esc>:se ft=ruby<cr>li
+nmap <LEADER>ruby <esc>:se ft=ruby<cr>
 
-" \eruby              一键切换到 eRuby 语法高亮
-imap <leader>eruby <esc>:se ft=eruby<cr>li
-nmap <leader>eruby <esc>:se ft=eruby<cr>
+" ,eruby              一键切换到 eRuby 语法高亮
+imap <LEADER>eruby <esc>:se ft=eruby<cr>li
+nmap <LEADER>eruby <esc>:se ft=eruby<cr>
 
-" \cf                 一键切换到 Coffee 语法高亮
-imap <leader>cf <esc>:se ft=coffee<cr>li
-nmap <leader>cf <esc>:se ft=coffee<cr>
+" ,cf                 一键切换到 Coffee 语法高亮
+imap <LEADER>cf <esc>:se ft=coffee<cr>li
+nmap <LEADER>cf <esc>:se ft=coffee<cr>
 
-" \ts                 一键切换到 TypeScript 语法高亮
-imap <leader>ts <esc>:se ft=typescript<cr>li
-nmap <leader>ts <esc>:se ft=typescript<cr>
+" ,ts                 一键切换到 TypeScript 语法高亮
+imap <LEADER>ts <esc>:se ft=typescript<cr>li
+nmap <LEADER>ts <esc>:se ft=typescript<cr>
 
-" \js                 一键切换到 JavaScript 语法高亮
-imap <leader>js <esc>:se ft=javascript<cr>li
-nmap <leader>js <esc>:se ft=javascript<cr>
+" ,js                 一键切换到 JavaScript 语法高亮
+imap <LEADER>js <esc>:se ft=javascript<cr>li
+nmap <LEADER>js <esc>:se ft=javascript<cr>
 
-" \jsx                一键切换到 JSX 语法高亮
-imap <leader>jsx <esc>:se ft=javascript.jsx<cr>li
-nmap <leader>jsx <esc>:se ft=javascript.jsx<cr>
+" ,java                一键切换到 Java 语法高亮
+imap <LEADER>java <esc>:se ft=java<cr>li
+nmap <LEADER>java <esc>:se ft=java<cr>
 
-" \css                一键切换到 CSS 语法高亮
-imap <leader>css <esc>:se ft=css<cr>li
-nmap <leader>css <esc>:se ft=css<cr>
+" ,css                一键切换到 CSS 语法高亮
+imap <LEADER>css <esc>:se ft=css<cr>li
+nmap <LEADER>css <esc>:se ft=css<cr>
 
-" \html               一键切换到 HTML 语法高亮
-imap <leader>html <esc>:se ft=html<cr>li
-nmap <leader>html <esc>:se ft=html<cr>
+" ,html               一键切换到 HTML 语法高亮
+imap <LEADER>html <esc>:se ft=html<cr>li
+nmap <LEADER>html <esc>:se ft=html<cr>
+
+" ,sql               一键切换到 SQL 语法高亮
+imap <LEADER>sql <esc>:se ft=sql<cr>li
+nmap <LEADER>sql <esc>:se ft=sql<cr>
 
 " ##########################   自动编译文件    ######################################
+
+" ,run        一键保存、编译、运行
+imap <LEADER>run <esc>:call Compile_Run_Code()<cr>
+nmap <LEADER>run :call Compile_Run_Code()<cr>
+vmap <LEADER>run <esc>:call Compile_Run_Code()<cr>
+
 " ======= 编译 && 运行 ======= "
 " 编译并运行
 func! Compile_Run_Code()
@@ -644,11 +622,6 @@ func! Compile_Run_Code()
     endif
 endfunc
 
-" \rr        一键保存、编译、运行
-imap <leader>rr <esc>:call Compile_Run_Code()<cr>
-nmap <leader>rr :call Compile_Run_Code()<cr>
-vmap <leader>rr <esc>:call Compile_Run_Code()<cr>
-
 " ########################   添加文件Title  #############################
 
 " Python自动插入文件标题
@@ -669,8 +642,8 @@ endfunc
 
 " ------------------ NERDTree插件配置 ------------------
 "树形目录开关
-map <C-n> :NERDTreeMirror<CR>
-map <C-n> :NERDTreeToggle<CR>
+map <LEADER>nt :NERDTreeMirror<CR>
+map <LEADER>nt :NERDTreeToggle<CR>
 " 当只剩 文件窗口管理器时 关闭 vim
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " 更改默认的 箭头 
@@ -684,6 +657,23 @@ let NERDTreeWinSize=25                                          " 设置窗口�
 let NERDTreeQuitOnOpen=1                                        " 打开一个文件时nerdtree分栏自动关闭
 " 打开文件默认开启文件树
 "autocmd VimEnter * NERDTree
+" NERDTree            树形文件浏览器
+let g:NERDTreeShowHidden         = 1           " 显示隐藏文件   [NERDTree]
+let g:NERDTreeShowIgnoredStatus  = 1           " 显示被忽略图标 [NERDTree-Git-Plugin]
+let g:NERDTreeIndicatorMapCustom = {
+            \ 'Modified'  : '✹',
+            \ 'Staged'    : '✚',
+            \ 'Untracked' : '✭',
+            \ 'Renamed'   : '➜',
+            \ 'Unmerged'  : '═',
+            \ 'Deleted'   : '✖',
+            \ 'Dirty'     : '✗',
+            \ 'Clean'     : '✔︎',
+            \ 'Unknown'   : '?'
+            \ }                                " 为 NERDTree-Git-Plugin 设定各个状态对应的符号
+
+" NERD_commenter      注释处理插件
+let NERDSpaceDelims = 1                        " 自动添加前置空格
 
 " ******************** 航空公司的配置 ********************************
 " 开启拓展
@@ -694,7 +684,7 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 " 启用默认样式
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 " 配置样式
-let g:airline_theme='atomic'
+let g:airline_theme='papercolor'
 
 let g:airline#extensions#keymap#enabled = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
@@ -711,21 +701,21 @@ let g:airline#extensions#tabline#buffer_idx_format = {
        \ '9': '9 '
        \}
 " 设置切换tab的快捷键 <,> + <i> 切换到第i个 tab
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <LEADER>1 <Plug>AirlineSelectTab1
+nmap <LEADER>2 <Plug>AirlineSelectTab2
+nmap <LEADER>3 <Plug>AirlineSelectTab3
+nmap <LEADER>4 <Plug>AirlineSelectTab4
+nmap <LEADER>5 <Plug>AirlineSelectTab5
+nmap <LEADER>6 <Plug>AirlineSelectTab6
+nmap <LEADER>7 <Plug>AirlineSelectTab7
+nmap <LEADER>8 <Plug>AirlineSelectTab8
+nmap <LEADER>9 <Plug>AirlineSelectTab9
 " 设置切换tab的快捷键 <,> + <-> 切换到前一个 tab
-nmap <leader>- <Plug>AirlineSelectPrevTab
+nmap <LEADER>- <Plug>AirlineSelectPrevTab
 " 设置切换tab的快捷键 <,> + <+> 切换到后一个 tab
-nmap <leader>+ <Plug>AirlineSelectNextTab
+nmap <LEADER>+ <Plug>AirlineSelectNextTab
 " 设置切换tab的快捷键 <,> + <q> 退出当前的 tab
-nmap <leader>q :bp<cr>:bd #<cr>
+nmap <LEADER>q :bp<cr>:bd #<cr>
 " 修改了一些个人不喜欢的字符
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -1013,25 +1003,20 @@ call plug#begin()
 " ------------------------------ 美化 ------------------------------ 
 "启动vim或nvim你将看到一个酷酷的启动界面
 Plug 'mhinz/vim-startify'
-" 吸血鬼 主题
-Plug 'dracula/vim', { 'as': 'dracula' }
-"gruvbox 主题
-"Plug 'morhetz/gruvbox'
-" 护眼主题
-"Plug 'nightsense/cosmic_latte'
-" 一个不知名的黑色主题
-"Plug 'joshdick/onedark.vim'
-"vim-airline 底部状态栏优化
-Plug 'bling/vim-airline'
-" 主题安装
-"Plug 'ajmwagar/vim-deus'
-" ----- 底部状态栏( 航空公司不能与灯线同时存在 ) -----
+" ----- 底部状态栏 -----
 " 航空公司
 Plug 'vim-airline/vim-airline'
 " 航空公司的主题
 Plug 'vim-airline/vim-airline-themes'
-" 灯线
-"Plug 'itchyny/lightline.vim'
+" gruvbox 主题
+Plug 'morhetz/gruvbox'
+
+" 一个不知名的黑色主题
+"Plug 'joshdick/onedark.vim'
+" 主题安装
+"Plug 'ajmwagar/vim-deus'
+" 吸血鬼 主题
+"Plug 'dracula/vim', { 'as': 'dracula' }
 
 " ------------------------------ 语法高亮包 ------------------------------ 
 " HTML, CSS, JavaScript, PHP, JSON, etc.
@@ -1094,8 +1079,8 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 "自动引号/括号
 Plug 'jiangmiao/auto-pairs'
-" Optional:
-Plug 'honza/vim-snippets'
+" LaTeX文件工具
+"Plug 'honza/vim-snippets'
 
 "-----------------------------------
 " 自动选中括号内的文本
