@@ -1,45 +1,34 @@
-# Rime schema
+# Rime schema settings
 # encoding: utf-8
 
 schema:
-  schema_id: clover
-  name: 🍀️四叶草简体拼音
-  version: "1.0.0"
+  schema_id: wubi86
+  name: "五笔86"
+  version: "0.21"
   author:
-    - fkxxyz - https://www.fkxxyz.com
+    - 發明人 王永民先生
   description: |
-    由🍀️四叶草亲自定制，特点：
-      1. 结合搜狗输入法的输入习惯
-      2. 默认开启 emoji 表情支持
-      3. 加上很多特殊符号的输入支持
-      4. 繁简切换支持
-      5. 许多智能纠错
+    五筆字型86版
+    碼表源自 ibus-table
+    敲 z 鍵進入拼音反查
   dependencies:
-    - emoji
+    - pinyin_simp
 
 switches:
-  - name: zh_simp_s2t
-    reset: 0
-    states: [ 简, 繁 ]
-  - name: emoji_suggestion
-    reset: 1
-    states: [ "🈚️️\uFE0E", "🈶️️\uFE0F" ]
-  - name: symbol_support
-    reset: 1
-    states: [ "无符", "符" ]
-  - name: ascii_punct
-    reset: 0
-    states: [ 。，, ．， ]
-  - name: full_shape
-    reset: 0
-    states: [ 半, 全 ]
   - name: ascii_mode
     reset: 0
-    states: [ 中, 英 ]
+    states: [ 中文, 西文 ]
+  - name: full_shape
+    states: [ 半角, 全角 ]
+  - name: extended_charset
+    states: [ 常用, 增廣 ]
+  - name: ascii_punct
+    states: [ 。，, ．， ]
 
 engine:
   processors:
     - ascii_composer
+    - recognizer
     - key_binder
     - speller
     - punctuator
@@ -54,63 +43,39 @@ engine:
     - fallback_segmentor
   translators:
     - punct_translator
-    - script_translator
-    - lua_translator@datetime_translator  # 输入时间日期的方案  https://tieba.baidu.com/p/1923873073?red_tag=t1647137642
-  filters:
-    - simplifier@emoji_suggestion
-    - simplifier@symbol_support
-    - simplifier
-    - uniquifier
-
-simplifier:
-  option_name: zh_simp_s2t
-  opencc_config: s2t.json
-
-emoji_suggestion:
-  opencc_config: emoji.json
-  option_name: emoji_suggestion
-  tips: all
-
-symbol_support:
-  opencc_config: symbol.json
-  option_name: symbol_support
-  tips: all
+    - reverse_lookup_translator
+    - table_translator
 
 speller:
-  alphabet: zyxwvutsrqponmlkjihgfedcba
-  delimiter: " '"
-  algebra:
-    # 基础
-    - abbrev/^([a-z]).+$/$1/              # 简拼（首字母）
-    - abbrev/^([zcs]h).+$/$1/             # 简拼（zh, ch, sh）
-    
-    # 处理 v 和 u
-    - derive/^([nl])ve$/$1ue/             # nve = nue, lve = lue
-    - derive/^([jqxy])u/$1v/              # v = u; v = u
-    - derive/un$/uen/                     # gun = guen,
-    - derive/ui$/uei/                     # gui = guei,
-    - derive/iu$/iou/                     # jiu = jiou,
-    
-    # 自动纠正一些常见的错误
-    - derive/^ding$/din/                  # din = ding
-    - derive/([dtngkhrzcs])o(u|ng)$/$1o/  # zho => zhong|zhou
-    - derive/ong$/on/                     # zhonguo => zhong guo
-    - derive/ao$/oa/                      # oa = ao
-    - derive/([iu])a(o|ng?)$/a$1$2/       # aio = iao; aing = iang; aung = uang
-    - derive/([aeiou])ng$/$1gn/           # gn = ng
-    - derive/tie$/tei/                    # tei = tie
-    - derive/i$/ii/                       # ii = i  # i 不小心按两下
-    - derive/u$/uu/                       # ui = u  # u 不小心按两下
-    
-
+  delimiter: " ;'"
+  #max_code_length: 4
 
 translator:
-  dictionary: clover
+  dictionary: wubi86
+  enable_charset_filter: true
+  enable_sentence: true
+  enable_encoder: true
+  encode_commit_history: true
+  max_phrase_length: 4
+  disable_user_dict_for_patterns:
+    - "^z.*$"
+
+reverse_lookup:
+  dictionary: pinyin_simp
+  prefix: "z"
+  suffix: "'"
+  tips: 〔拼音〕
   preedit_format:
     - xform/([nl])v/$1ü/
     - xform/([nl])ue/$1üe/
     - xform/([jqxy])v/$1u/
 
+recognizer:
+  import_preset: default
+  patterns:
+    punct: '^/([0-9]0?|[A-Za-z]+)$'
+    reverse_lookup: "^z[a-z]*'?$"
+    
 punctuator:
   import_preset: symbols
   full_shape:
@@ -199,5 +164,3 @@ ascii_composer:
     Control_R: noop
     Caps_Lock: noop
     Eisu_toggle: clear
-
-

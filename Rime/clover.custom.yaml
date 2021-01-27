@@ -1,6 +1,5 @@
 patch:
-  speller/algebra:
-
+  "speller/algebra":
     # 模糊音
     - derive/([ei])n$/$1ng/    # ing = in; eng = en
     - derive/([ei])ng$/$1n/    # in = ing; en = eng

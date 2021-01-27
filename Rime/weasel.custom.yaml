@@ -2,9 +2,23 @@ customization:
   distribution_code_name: Weasel
   distribution_version: 0.14.3
   generator: "Weasel::UIStyleSettings"
-  modified_time: "Fri Oct 30 10:42:04 2020"
+  modified_time: "Wed Jan 27 14:29:13 2021"
   rime_version: 1.5.3
 patch:
-  "style/color_scheme": metroblue
+  ascii_mode: true
+  "preset_color_schemes/blue":
+    author: "燚小白"
+    name: "蓝白"
+    text_color: 0xFF2414
+    candidate_text_color: 0x000000
+    back_color: 0xFFFFFF
+    border_color: 0xFF9914
+    hilited_back_color: 0xFFFFFF
+    hilited_candidate_text_color: 0xFF2212
+    hilited_candidate_back_color: 0xE6CE8C
+  "style/color_scheme": blue
+  "style/display_tray_icon": false
   "style/font_face": "微软雅黑"
   "style/font_point": 14
+  "style/horizo​​ntal": true
+  "style/inline_preedit": false

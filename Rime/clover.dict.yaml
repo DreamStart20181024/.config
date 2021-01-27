@@ -6,6 +6,7 @@ sort: by_weight
 import_tables:
   - clover.base
   - clover.phrase
+  - sogou_new_words
   - THUOCL_animal
   - THUOCL_caijing
   - THUOCL_car
@@ -17,5 +18,3 @@ import_tables:
   - THUOCL_lishimingren
   - THUOCL_medical
   - THUOCL_poem
-  - sogou_new_words
-
